@@ -1,1 +1,1 @@
-import sympy
+sympy==1.11
