@@ -135,7 +135,7 @@ def Newton_Rhapson(F):
     iteraciones = 0
 
     x0 = st.number_input("Punto de inicio")
-    error = 1
+    error = float(1)
     error_esperado = 0.05
 
     x2lista = [x0]
