@@ -26,14 +26,13 @@ def Biseccion(F):
 
     aux = 0  # Valor auxiliar
 
-    error_buscado = 0.005  # Error que se desea obtener
+    error_buscado = 0.05  # Error que se desea obtener
     x0list = [x0]
     x1list = [x1]
     x2list = [x2]
     fx0list = [F.subs(x, x0)]
     fx1list = [F.subs(x, x1)]
     fx2list = [F.subs(x, x2)]
-    fx0x2list = [F.subs(x, x0) * F.subs(x, x2)]
     errorlist = [error]
 
     while (error > error_buscado and F.subs(x, x2) != 0):
@@ -43,10 +42,11 @@ def Biseccion(F):
         else:
             x0 = x2
 
-        if iteraciones == 0:
+        if iteraciones == 0: #primera iteracion se evita dividir para 0
             aux = x2
         else:
-            error = abs((x2 - x0) / (x2)) * 100
+            error = abs((x2 - aux) / x2) * 100
+
             aux = x2
 
         iteraciones += 1
