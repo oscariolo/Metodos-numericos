@@ -2,7 +2,8 @@ import math as mt
 import pandas as pd
 import streamlit as st
 import sympy as sy
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 def Biseccion(F):
     st.header("METODO DE BISECCION")
@@ -75,7 +76,16 @@ def Biseccion(F):
 
     st.write(data)
     st.write("Valor de x mas cercano calculado: \n x2=  " + str(x2) + " \n f(x2)= " + str(F.subs(x, x2)))
-
+    xs = np.linspace(-10, 10, 100)
+    ys = [sy.lambdify(x, F)(x_val) for x_val in xs]
+    fig, ax = plt.subplots()
+    ax.plot(xs, ys)
+    ax.axhline(y=0, color='k')
+    ax.axvline(x=0, color='k')
+    ax.set_title('Gráfica de la función')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    st.pyplot(fig)
 
 def Punto_Fijo(F):
     st.header("METODO DE PUNTO FIJO")
