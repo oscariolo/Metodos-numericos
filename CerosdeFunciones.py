@@ -1,3 +1,4 @@
+import math
 import math as mt
 import pandas as pd
 import streamlit as st
@@ -13,6 +14,8 @@ def Biseccion(F,error_buscado):
 
     x1 = st.number_input("Dominio 2")
 
+    isContinuos(F,x0,x1)
+
     x2 = 0
 
     error = 1
@@ -20,7 +23,7 @@ def Biseccion(F,error_buscado):
     iteraciones = 0
 
     aux = 0
-
+    isReal(F,x0)
       # Error que se desea obtener
     x0list = [x0]
     x1list = [x1]
@@ -29,10 +32,11 @@ def Biseccion(F,error_buscado):
     fx1list = [F.subs(x, x1)]
     fx2list = [F.subs(x, x2)]
     errorlist = [error]
-
+    isReal(F, x1)
     try:
         while (error > error_buscado and F.subs(x, x2) != 0):
             x2 = (x1 + x0) / 2
+            isReal(F, x2)
             if (F.subs(x, x0) * F.subs(x, x2)) < 0:
                 x1 = x2
             else:
@@ -178,9 +182,37 @@ def Newton_Rhapson(F,error_esperado):
             }
 
         )
+        xs = np.linspace(-10, 10, 100)
+        #definimos cada iteracion una ecuacion de la recta
+        #pendiente igual a valor evaluado en diff
 
+        xpoints = np.linspace(-10, 10, 100)
+        fig, ax = plt.subplots()
+
+
+
+        for i in range(iteraciones): #segun el numero de iteraciones
+            m = Fd.subs(x, x2lista[i])
+            #ecuacion de la recta
+            #arrays para esa recta
+            y = [None]*xpoints.size
+            for j in range(xpoints.size):
+                y[j] = m *(xpoints[j] - x2lista[i]) + F.subs(x,resultslista[i])
+
+            ax.plot(xpoints,y, label = "Iteracion ")
+
+        for j in range(xpoints.size):
+            y[j] = F.subs(x,xpoints[j])
+
+
+        ax.plot(xpoints,y,label = "Funcion")
+        ax.axhline(y=0, color='k')
+        ax.axvline(x=0, color='k')
+
+        plt.plot(x2, sy.lambdify(x, F)(x2), 'ro', label='Raíz')
+        st.pyplot(fig)
         st.write(data)
-    except TypeError:
+    except TimeoutError:
         st.write("Funcion inválida o de dominio")
     # por iteraciones
 
@@ -293,6 +325,8 @@ def Muller(F,error_esperado):
 
             iteraciones += 1
 
+        oscilacion(np.array(x2lista))
+
         data = pd.DataFrame(
             {
                 "iteraciones": range(0, iteraciones + 1),
@@ -345,44 +379,48 @@ def slowConvergence(error, errorₚᵣₑᵥ, slow_convergence_counter, cadena_t
 
     # Comprobar contiuidad de una funcion
 
-def isContinuos(f, a, b, ϵ):
-    n = 100 / ϵ
-    i=1
-    for i in range(n - 1):
-        x1 = a + (i - 1) * (b - a) / (n - 1)
-        x2 = a + i * (b - a) / (n - 1)
+def isContinuos(f, a, b):
+    es_continua = True
 
-    if mt.isclose(f.subs(x,x1), f.subs(x,x2), atol=ϵ, rtol=ϵ):
-        st.write("La funcion no es continua en el intervalo [$a, $b]")
-        return False
-    return True
+    for i in range(int(a), int(b) + 1):
+        limite_izquierdo = f.limit(x, i, dir='-')
+        limite_derecho = f.limit(x, i, dir='+')
+        valor_funcion = f.subs(x, i)
+
+        if limite_izquierdo != limite_derecho or limite_izquierdo != valor_funcion:
+            es_continua = False
+            break
+
+    if es_continua:
+        st.write("La función es continua en el intervalo [{}, {}]".format(a, b))
+
+    else:
+        st.write("La función no es continua en el intervalo [{}, {}]".format(a, b))
+        st.stop()
 #oscilante
 #Comprobar oscilacion
 
-def oscilacion(range_size,range_sizeₚᵣₑᵥ,oscillation_counter,cadena_tip):
-    if range_size == range_sizeₚᵣₑᵥ:
-        oscillation_counter += 1
-        if oscillation_counter==5:
-            st.write("Oscilacion" + str(cadena_tip))
-            oscillation_counter =- 1
-    else:
-        oscillation_counter=0
-    return oscillation_counter
+def oscilacion(array):
+    respuestas = array
 
-#Comprobar si es real
+    # Verificar si las respuestas oscilan
+    oscila = False
 
-    # Comprobar funcion real
-def isRealFunction(f, a, b, ϵ, tolerancia):
-    n = 100 / ϵ
-    incremento = abs(b - a) / n
+    for i in range(len(respuestas) - 1):
+        if np.sign(respuestas[i]) != np.sign(respuestas[i + 1]) and np.abs(respuestas[i + 1] - respuestas[i]) > 1:
+            oscila = True
+            break
 
-    while a < b:
-        if not mt.isclose(f.subs(x,a.imag), 0, atol=tolerancia, rtol=tolerancia):
-            st.write("La funcion no es real en el intervalo proporcionado")
-            return False
-        a += incremento
-    return True
+    if oscila:
+        st.write("Las respuestas oscilan.")
+        st.stop()
 
+def isReal(f,x0):
+    function = sy.lambdify(x, f)
+    resultado_obtenido = function(x0)
+    if  math.isnan(resultado_obtenido):
+        st.write("La función f(x) no es real en el intervalo dado")
+        st.stop()
 ###############################
 
 
