@@ -186,18 +186,18 @@ def Newton_Rhapson(F,error_esperado):
         #definimos cada iteracion una ecuacion de la recta
         #pendiente igual a valor evaluado en diff
 
-        xpoints = np.linspace(-10, 10, 100)
+        xpoints = np.linspace(-5, 5, 100)
         fig, ax = plt.subplots()
 
 
 
         for i in range(iteraciones): #segun el numero de iteraciones
-            m = Fd.subs(x, x2lista[i])
+            m = Fd.subs(x, x2lista[i+1])
             #ecuacion de la recta
             #arrays para esa recta
             y = [None]*xpoints.size
             for j in range(xpoints.size):
-                y[j] = m *(xpoints[j] - x2lista[i]) + F.subs(x,resultslista[i])
+                y[j] = m *(xpoints[j] - x2lista[i+1]) + F.subs(x,resultslista[i+1]+1.2)
 
             ax.plot(xpoints,y, label = "Iteracion ")
 
@@ -212,7 +212,7 @@ def Newton_Rhapson(F,error_esperado):
         plt.plot(x2, sy.lambdify(x, F)(x2), 'ro', label='Raíz')
         st.pyplot(fig)
         st.write(data)
-    except TimeoutError:
+    except TypeError:
         st.write("Funcion inválida o de dominio")
     # por iteraciones
 
