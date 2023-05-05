@@ -69,7 +69,7 @@ lista_respuestas = [0]*dim_n
 lista_error = [0]*dim_n
 
 # loop run for m times depending on m the error value
-while error_arriba_de_umbral and iteraciones<20:
+while error_arriba_de_umbral and iteraciones<1000:
     x = seidel(A, x, B) #solucion actual
     st.write("Iteracion " + str(iteraciones))
     for i in range(dim_n):
