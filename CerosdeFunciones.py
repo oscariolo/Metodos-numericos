@@ -1,4 +1,3 @@
-import math
 import math as mt
 import pandas as pd
 import streamlit as st
@@ -114,7 +113,7 @@ def Punto_Fijo(F,error_buscado):
         x2lista = [x2]
         resultslista = [F.subs(x, x2)]
 
-        while (error > error_buscado and iteraciones < 50):
+        while (error > error_buscado and iteraciones < 1000):
             x2 = float(G.subs(x, x0))  # actual
 
             error = abs((x2 - x0) / (x2)) * 100
@@ -182,37 +181,32 @@ def Newton_Rhapson(F,error_esperado):
             }
 
         )
-        xs = np.linspace(-10, 10, 100)
         #definimos cada iteracion una ecuacion de la recta
         #pendiente igual a valor evaluado en diff
-
-        xpoints = np.linspace(-5, 5, 100)
+        xpoints = np.linspace(-6, 6, 100)
         fig, ax = plt.subplots()
-
-
-
-        for i in range(iteraciones): #segun el numero de iteraciones
-            m = Fd.subs(x, x2lista[i+1])
-            #ecuacion de la recta
-            #arrays para esa recta
-            y = [None]*xpoints.size
+        for i in range(iteraciones):  # segun el numero de iteraciones
+            m = float(Fd.subs(x, x2lista[i + 1]))
+                # ecuacion de la recta
+                # arrays para esa recta
+            y = [None] * xpoints.size
             for j in range(xpoints.size):
-                y[j] = m *(xpoints[j] - x2lista[i+1]) + F.subs(x,resultslista[i+1]+1.2)
+                y[j] = m * (xpoints[j] - x2lista[i+1]) + F.subs(x, resultslista[i+1 ])
 
-            ax.plot(xpoints,y, label = "Iteracion ")
+            ax.plot(xpoints, y, label="Iteracion " + str(i))
 
         for j in range(xpoints.size):
-            y[j] = F.subs(x,xpoints[j])
+            y[j] = F.subs(x, xpoints[j])
 
-
-        ax.plot(xpoints,y,label = "Funcion")
+        ax.plot(xpoints, y, label="Funcion")
+        ax.legend(loc = 'upper right')
         ax.axhline(y=0, color='k')
         ax.axvline(x=0, color='k')
-
         plt.plot(x2, sy.lambdify(x, F)(x2), 'ro', label='Raíz')
         st.pyplot(fig)
         st.write(data)
-    except TypeError:
+
+    except TimeoutError:
         st.write("Funcion inválida o de dominio")
     # por iteraciones
 
@@ -418,7 +412,7 @@ def oscilacion(array):
 def isReal(f,x0):
     function = sy.lambdify(x, f)
     resultado_obtenido = function(x0)
-    if  math.isnan(resultado_obtenido):
+    if  mt.isnan(resultado_obtenido):
         st.write("La función f(x) no es real en el intervalo dado")
         st.stop()
 ###############################
