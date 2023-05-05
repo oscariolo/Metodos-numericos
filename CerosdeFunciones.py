@@ -136,6 +136,19 @@ def Punto_Fijo(F,error_buscado):
         )
 
         st.write(data)
+        xs = np.linspace(-10, 10, 1000)
+        ys = [sy.lambdify(x, F)(x_val) for x_val in xs]
+        ys2 = [sy.lambdify(x, G)(x_val) for x_val in xs]
+        fig = plt.figure()
+        ax = fig.add_subplot(axes_class=AxesZero)
+        ax.plot(xs, ys)
+        ax.plot(xs, ys2)
+        ax.axhline(y=0, color='k')
+        ax.axvline(x=0, color='k')
+        ax.set_title('Gráfica de la función')
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+        st.pyplot(fig)
     except TypeError:
         st.write("Funcion inválida o de dominio")
 
